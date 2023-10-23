@@ -10,6 +10,7 @@ import (
 	"github.com/Hinkku-Company/aphrodite_monolite/config"
 	"github.com/Hinkku-Company/aphrodite_monolite/logger"
 	"github.com/Hinkku-Company/aphrodite_monolite/src/shared/models/tables"
+	"github.com/Hinkku-Company/aphrodite_monolite/utils"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -21,10 +22,34 @@ type Auth struct {
 }
 
 func NewAuth(config config.Config) *Auth {
+	decodeCert(&config)
 	return &Auth{
 		config: config,
 		log:    logger.Log(),
 	}
+}
+
+func decodeCert(config *config.Config) {
+	cert, err := utils.DecodeB64(config.AccessTokenPrivateKey)
+	if err != nil {
+		panic(err)
+	}
+	config.AccessTokenPrivateKey = cert
+	cert, err = utils.DecodeB64(config.RefreshTokenPrivateKey)
+	if err != nil {
+		panic(err)
+	}
+	config.RefreshTokenPrivateKey = cert
+	cert, err = utils.DecodeB64(config.AccessTokenPublicKey)
+	if err != nil {
+		panic(err)
+	}
+	config.AccessTokenPublicKey = cert
+	cert, err = utils.DecodeB64(config.RefreshTokenPublicKey)
+	if err != nil {
+		panic(err)
+	}
+	config.RefreshTokenPublicKey = cert
 }
 
 func (a *Auth) CreateToken(user tables.User) (*tables.Access, error) {
