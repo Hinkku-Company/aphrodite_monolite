@@ -1,7 +1,6 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE SCHEMA IF NOT EXISTS hk
-    AUTHORIZATION postgres;
+CREATE SCHEMA IF NOT EXISTS hk;
 CREATE TABLE "hk"."access_rol" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "name" varchar
