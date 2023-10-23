@@ -1,6 +1,6 @@
-FROM golang:1.21.3-alpine3.17 AS build_base
+FROM golang:latest AS build_base
 
-RUN apk update && apk add --no-cache git && apk --no-cache add openssl
+RUN apt update -y && apt install git -y
 
 WORKDIR /tmp/app
 
@@ -13,8 +13,9 @@ COPY . .
 
 RUN go build -o ./out/app ./cmd/.
 
-FROM alpine:3.17
-RUN apk add ca-certificates
+FROM golang:latest
+
+RUN apt install ca-certificates
 
 COPY --from=build_base /tmp/app/out/app /app/app
 
