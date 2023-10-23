@@ -27,21 +27,19 @@ type dataBase struct {
 type jwt struct {
 	AccessTokenPrivateKey  string
 	AccessTokenPublicKey   string
-	AccessTokenExpiredIn   string
-	AccessTokenMaxage      string
+	AccessTokenExpiredMin  string
 	RefreshTokenPrivateKey string
 	RefreshTokenPublicKey  string
-	RefreshTokenExpiredIn  string
-	RefreshTokenMaxage     string
+	RefreshTokenExpiredMin string
 }
 
 type api struct {
-	RESTPort string
-	GQLPort  string
+	APPPort string
 }
 
 type Config struct {
-	AppENV string
+	AppENV        string
+	AdminPassword string
 	dataBase
 	api
 	redis
@@ -53,9 +51,10 @@ func NewConfig() *Config {
 }
 
 func (c *Config) LoadConfigFromEnv() (Config, error) {
-	logger.Log().Info("Load Env configuration")
+	logger.Log().Info("Load .env configuration")
 	var config Config
 	requiredEnvVars := []string{
+		"ADMIN_PASSWORD",
 		"DB_HOST",
 		"DB_PORT",
 		"DB_USER",
@@ -66,19 +65,18 @@ func (c *Config) LoadConfigFromEnv() (Config, error) {
 		"REDIS_PASSWORD",
 		"ACCESS_TOKEN_PRIVATE_KEY",
 		"ACCESS_TOKEN_PUBLIC_KEY",
-		"ACCESS_TOKEN_EXPIRED_IN",
-		"ACCESS_TOKEN_MAXAGE",
+		"ACCESS_TOKEN_EXPIRED_MIN",
 		"REFRESH_TOKEN_PRIVATE_KEY",
 		"REFRESH_TOKEN_PUBLIC_KEY",
-		"REFRESH_TOKEN_EXPIRED_IN",
-		"REFRESH_TOKEN_MAXAGE",
+		"REFRESH_TOKEN_EXPIRED_MIN",
 	}
 	if err := c.checkRequiredEnvVars(requiredEnvVars); err != nil {
 		return config, err
 	}
 
 	config = Config{
-		AppENV: c.getEnv("APP_ENV"),
+		AppENV:        c.getEnv("APP_ENV"),
+		AdminPassword: c.getEnv("ADMIN_PASSWORD"),
 		dataBase: dataBase{
 			DBHost:       c.getEnv("DB_HOST"),
 			DBPort:       c.getEnv("DB_PORT"),
@@ -88,8 +86,7 @@ func (c *Config) LoadConfigFromEnv() (Config, error) {
 			DBIsInsecure: c.getBoolEnv("DB_INSECURE", false),
 		},
 		api: api{
-			RESTPort: c.getEnvDefault("AP_REST_PORT", "9119"),
-			GQLPort:  c.getEnvDefault("AP_GQL_PORT", "8118"),
+			APPPort: c.getEnvDefault("APP_PORT", "8118"),
 		},
 		redis: redis{
 			RedisHost:     c.getEnv("REDIS_HOST"),
@@ -100,12 +97,10 @@ func (c *Config) LoadConfigFromEnv() (Config, error) {
 		jwt: jwt{
 			AccessTokenPrivateKey:  c.getEnv("ACCESS_TOKEN_PRIVATE_KEY"),
 			AccessTokenPublicKey:   c.getEnv("ACCESS_TOKEN_PUBLIC_KEY"),
-			AccessTokenExpiredIn:   c.getEnv("ACCESS_TOKEN_EXPIRED_IN"),
-			AccessTokenMaxage:      c.getEnv("ACCESS_TOKEN_MAXAGE"),
+			AccessTokenExpiredMin:  c.getEnv("ACCESS_TOKEN_EXPIRED_MIN"),
 			RefreshTokenPrivateKey: c.getEnv("REFRESH_TOKEN_PRIVATE_KEY"),
 			RefreshTokenPublicKey:  c.getEnv("REFRESH_TOKEN_PUBLIC_KEY"),
-			RefreshTokenExpiredIn:  c.getEnv("REFRESH_TOKEN_EXPIRED_IN"),
-			RefreshTokenMaxage:     c.getEnv("REFRESH_TOKEN_MAXAGE"),
+			RefreshTokenExpiredMin: c.getEnv("REFRESH_TOKEN_EXPIRED_MIN"),
 		},
 	}
 

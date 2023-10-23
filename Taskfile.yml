@@ -6,4 +6,21 @@ tasks:
   run:
     dir: './cmd'
     cmds:
-      - go run main.go
+      - go run .
+
+  reload:
+    dir: './cmd'
+    cmds:
+      - nodemon --exec go run . --signal SIGTERM --ext go
+      
+  generate:
+    cmds:
+      - go generate ./...
+  
+  gen-cert:
+    cmds:
+
+      - openssl ecparam -name prime256v1 -genkey -noout -out ACCESS_TOKEN_PRIVATE_KEY.pem
+      - openssl ec -in ACCESS_TOKEN_PRIVATE_KEY.pem -pubout -out ACCESS_TOKEN_PUBLIC_KEY.pem
+      - openssl ecparam -name prime256v1 -genkey -noout -out REFRESH_TOKEN_PRIVATE_KEY.pem
+      - openssl ec -in REFRESH_TOKEN_PRIVATE_KEY.pem -pubout -out REFRESH_TOKEN_PUBLIC_KEY.pem

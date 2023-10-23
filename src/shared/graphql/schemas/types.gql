@@ -1,0 +1,18 @@
+type Response {
+  status: Boolean
+}
+
+input Credentials {
+  userName: String!
+  password: String!
+}
+
+input AccessToken {
+  token: String!
+  tokenRefresh: String!
+}
+
+type Access {
+  token: String!
+  tokenRefresh: String!
+}
