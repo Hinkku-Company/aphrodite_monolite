@@ -29,8 +29,13 @@ func main() {
 	}
 
 	// postgres
-	psql, err := postgres.NewClient(context.Background(), conf).ConnectPostgres()
+	psqlConn := postgres.NewClient(context.Background(), conf)
+	psql, err := psqlConn.ConnectPostgres()
 	if err != nil {
+		slog.Error(err.Error())
+		return
+	}
+	if err := psqlConn.MigrationsUP(); err != nil {
 		slog.Error(err.Error())
 		return
 	}
