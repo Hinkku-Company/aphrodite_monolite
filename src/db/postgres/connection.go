@@ -2,17 +2,18 @@ package postgres
 
 import (
 	"context"
-	"database/sql"
 	"embed"
+	"fmt"
 	"net"
 	"time"
 
 	"github.com/Hinkku-Company/aphrodite_monolite/config"
 	"github.com/Hinkku-Company/aphrodite_monolite/logger"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/pressly/goose/v3"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
-	"github.com/uptrace/bun/driver/pgdriver"
 	"github.com/uptrace/bun/extra/bundebug"
 )
 
@@ -32,17 +33,29 @@ func NewClient(ctx context.Context, config config.Config) *postgresConn {
 	}
 }
 
+func (p *postgresConn) parseURL() *pgx.ConnConfig {
+	connStr := fmt.Sprintf(
+		"postgres://%s:%s@%s/%s",
+		p.config.DBUser,
+		p.config.DBPassword,
+		net.JoinHostPort(p.config.DBHost, p.config.DBPort),
+		p.config.DBName)
+
+	if !p.config.DBIsInsecure {
+		connStr += "?sslmode=require"
+	}
+
+	config, err := pgx.ParseConfig(connStr)
+	if err != nil {
+		panic(err)
+	}
+	return config
+}
+
 func (p *postgresConn) ConnectPostgres() (*bun.DB, error) {
 	host := net.JoinHostPort(p.config.DBHost, p.config.DBPort)
 	logger.Log().Info("Get Postgres connection", "url", host)
-	sqldb := sql.OpenDB(pgdriver.NewConnector(
-		pgdriver.WithAddr(host),
-		pgdriver.WithUser(p.config.DBUser),
-		pgdriver.WithPassword(p.config.DBPassword),
-		pgdriver.WithDatabase(p.config.DBName),
-		pgdriver.WithApplicationName("Aphrodite"),
-		pgdriver.WithInsecure(p.config.DBIsInsecure),
-	))
+	sqldb := stdlib.OpenDB(*p.parseURL())
 	p.client = bun.NewDB(sqldb, pgdialect.New())
 
 	p.client.SetMaxOpenConns(25)
