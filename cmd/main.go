@@ -8,9 +8,8 @@ import (
 	"github.com/Hinkku-Company/aphrodite_monolite/logger"
 	"github.com/Hinkku-Company/aphrodite_monolite/src/db/postgres"
 	"github.com/Hinkku-Company/aphrodite_monolite/src/db/redis"
-	"github.com/Hinkku-Company/aphrodite_monolite/src/login/infra/gql"
+	"github.com/Hinkku-Company/aphrodite_monolite/src/login/infra/rpc"
 	"github.com/Hinkku-Company/aphrodite_monolite/src/login/usecase"
-	"github.com/Hinkku-Company/aphrodite_monolite/src/shared/graphql/resolvers"
 )
 
 func main() {
@@ -47,16 +46,10 @@ func main() {
 	// DI
 	// login
 	loginUC := usecase.NewLoginUseCase(psqlRepo, rrRepo, conf)
-	infraGQL := gql.NewLoginGQL(loginUC)
 
 	// server
-	server := NewAPIServer(conf).Config()
-	// graphql
-	_ = server.StartGraphql(&resolvers.Resolver{
-		LoginModule: *infraGQL,
-	})
-	// rest
-	_ = server.StartRest()
+	server := NewAPIServer(conf)
+	rpc.NewLogin(server.grpcServer, loginUC).RegisterService()
 	// run
 	server.Run()
 }

@@ -1,25 +1,22 @@
 version: 3
-
-dotenv: [".env"]
+dotenv:
+  - .env
 tasks:
-
   run:
-    dir: './cmd'
+    dir: ./cmd
     cmds:
       - go run .
-
   reload:
-    dir: './cmd'
+    dir: ./cmd
     cmds:
       - nodemon --exec go run . --signal SIGTERM --ext go
-      
   generate:
+    dir: ./src/shared/grpc
     cmds:
-      - go generate ./...
-  
+      - mkdir v1 || echo "Directory v1 already exists."
+      - protoc --go_out=v1 --go_opt=paths=source_relative --go-grpc_out=v1 --go-grpc_opt=paths=source_relative proto/*.proto
   gen-cert:
     cmds:
-
       - openssl ecparam -name prime256v1 -genkey -noout -out ACCESS_TOKEN_PRIVATE_KEY.pem
       - openssl ec -in ACCESS_TOKEN_PRIVATE_KEY.pem -pubout -out ACCESS_TOKEN_PUBLIC_KEY.pem
       - openssl ecparam -name prime256v1 -genkey -noout -out REFRESH_TOKEN_PRIVATE_KEY.pem
