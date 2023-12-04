@@ -1,0 +1,21 @@
+{
+  "name": "aphrodite_gql_gateway",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "mesh build",
+    "start:prod": "mesh start",
+    "start:dev": "mesh dev",
+    "docker:prod": "mesh build && mesh start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@graphql-mesh/cli": "^0.88.2",
+    "@graphql-mesh/grpc": "^0.97.1",
+    "graphql": "^16.8.1"
+  }
+}

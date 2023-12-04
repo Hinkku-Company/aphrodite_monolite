@@ -1,20 +1,25 @@
 version: 3
-dotenv:
-  - .env
+dotenv: 
+  - './api/.env'
+  - './gql/.env'
+
 tasks:
-  run:
-    dir: ./cmd
+  run-go:
+    dir: ./api/cmd
     cmds:
       - go run .
-  reload:
-    dir: ./cmd
+
+  run-gql:
+    dir: ./gql
     cmds:
-      - nodemon --exec go run . --signal SIGTERM --ext go
+      - pnpm run start:dev
+
   generate:
-    dir: ./src/shared/grpc
+    dir: ./api/src/shared/grpc
     cmds:
       - mkdir v1 || echo "Directory v1 already exists."
       - protoc --go_out=v1 --go_opt=paths=source_relative --go-grpc_out=v1 --go-grpc_opt=paths=source_relative proto/*.proto
+
   gen-cert:
     cmds:
       - openssl ecparam -name prime256v1 -genkey -noout -out ACCESS_TOKEN_PRIVATE_KEY.pem

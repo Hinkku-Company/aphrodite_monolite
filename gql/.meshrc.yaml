@@ -1,0 +1,13 @@
+serve:
+  fork: 1
+  port: '{env.PORT}'
+  browser: false
+  playground: true
+  playgroundTitle: 'Aphrodite GraphiQL Mesh'
+sources:
+  - name: gRPC
+    handler:
+      grpc:
+        endpoint: '{env.GRPC_HOST}'
+        metaData:
+          authorization: '{context.headers["Authorization"]}'
