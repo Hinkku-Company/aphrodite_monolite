@@ -7,7 +7,7 @@ RUN go mod download
 COPY ./api/ .
 RUN go build -o ./out/app ./cmd/.
 
-FROM node:18-alpine3.17
+FROM node:20-alpine3.17
 
 ENV PORT=80 
 ENV APP_PORT=50051
