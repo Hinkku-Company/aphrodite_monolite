@@ -7,13 +7,12 @@ RUN go mod download
 COPY ./api/ .
 RUN go build -o ./out/app ./cmd/.
 
-FROM node:20-alpine3.17
+FROM node:20
 
 ENV PORT=80 
 ENV APP_PORT=50051
 ENV GRPC_HOST=127.0.0.1:${APP_PORT}
 
-RUN apk add --no-cache git python3 curl-dev build-base
 RUN npm install --global pnpm
 
 WORKDIR /app
