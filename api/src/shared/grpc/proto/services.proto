@@ -1,0 +1,17 @@
+syntax = "proto3";
+package v1;
+
+option go_package = "github.com/Hinkku-Company/aphrodite_monolite/src/shared/grpc/v1";
+import "proto/types.proto";
+
+
+service LoginService {
+    rpc GetLogin (CredentialsInput) returns (AccessResponse);
+    rpc LogOut (TokenAccessInput) returns (Empty);
+}
+
+
+service  UserServices {
+    rpc GetUser (UserInput) returns (UserResponse);
+    rpc ListUser (Empty) returns (ListUserResponse);
+}

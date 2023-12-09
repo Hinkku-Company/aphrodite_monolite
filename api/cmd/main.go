@@ -10,6 +10,8 @@ import (
 	"github.com/Hinkku-Company/aphrodite_monolite/src/db/redis"
 	"github.com/Hinkku-Company/aphrodite_monolite/src/login/infra/rpc"
 	"github.com/Hinkku-Company/aphrodite_monolite/src/login/usecase"
+	userrpc "github.com/Hinkku-Company/aphrodite_monolite/src/user/infra/rpc"
+	useruc "github.com/Hinkku-Company/aphrodite_monolite/src/user/usecase"
 )
 
 func main() {
@@ -46,10 +48,13 @@ func main() {
 	// DI
 	// login
 	loginUC := usecase.NewLoginUseCase(psqlRepo, rrRepo, conf)
+	// user
+	userUC := useruc.NewUserUseCase(psqlRepo)
 
 	// server
 	server := NewAPIServer(conf)
 	rpc.NewLogin(server.grpcServer, loginUC).RegisterService()
+	userrpc.NewUser(server.grpcServer, userUC).RegisterService()
 	// run
 	server.Run()
 }
