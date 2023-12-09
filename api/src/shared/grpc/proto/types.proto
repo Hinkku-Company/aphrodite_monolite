@@ -1,9 +1,17 @@
 syntax = "proto3";
-package login;
 
+package v1;
 option go_package = "github.com/Hinkku-Company/aphrodite_monolite/src/shared/grpc/v1";
-import "proto/response.proto";
 
+message Empty {}
+
+message Pagination {
+    int64 total = 1;
+}
+
+message Filter {}
+
+// LOGIN
 message AccessResponse {
     string token = 1;
     string token_refresh = 2;
@@ -19,7 +27,18 @@ message TokenAccessInput {
   string token_refresh = 2;
 }
 
-service LoginService {
-    rpc GetLogin (CredentialsInput) returns (AccessResponse);
-    rpc LogOut (TokenAccessInput) returns (response.Empty);
+// USER
+message UserResponse {
+    string id = 1;
+    string name = 2;
+    string type_user = 3;
+    string email = 4;
+}
+
+message UserInput {
+    string id = 1;
+}
+
+message ListUserResponse {
+    repeated UserResponse items = 1;
 }

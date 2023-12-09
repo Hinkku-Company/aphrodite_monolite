@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 
+	"github.com/Hinkku-Company/aphrodite_monolite/src/login/repository"
 	"github.com/Hinkku-Company/aphrodite_monolite/src/shared/models/tables"
 )
 
@@ -43,3 +44,5 @@ func (q *query) GetRol(ctx context.Context, model tables.User) ([]tables.UserAcc
 
 	return accessRol, nil
 }
+
+var _ repository.SQLRepository = (*query)(nil)
